@@ -1,5 +1,13 @@
 # 项目进度
 
+## 2026-09-10 MT5 v32.15 突破阶梯修复候选
+
+- 根因：挂单成交时已经带止损，但突破登记的 `initial_sl_done` 仍为 false；既有止损不需要收紧，因而没有修改请求，也没有完成标记，后续阶梯被阻断。
+- 修复：检测已有同等或更好止损后确认初始止损完成，并输出一次 `AB_DIAG breakout initial SL confirmed`。缺少或较弱止损仍走原修改流程。
+- 专项测试 `tests/mt5/tester/AutoBreakeven_v32_15_BreakoutSL_Tester.mq5`：旧逻辑 checks=46 / failures=34；修复后 checks=66 / failures=0。覆盖双向、2500 点边界、快速越档、保本衔接及防重复请求。测试拦截交易接口，验证请求与状态，不代表真实经纪商成交。
+- 正式 EA 编译日志 `tests/mt5/tester/compile-auto-breakeven-v32-15.log`：0 errors, 0 warnings。源码及 EX5 位于 `src/mt5/AutoBreakeven_v32_15.*`，独立 include 为 `src/mt5_v32_15/include`；已部署当前终端 `Experts/MT5Migration_v32_15`，未替换图表上的 EA。
+- 待用户真实图表验收；v32.14 保留为已验收基线。GPT Review Picker 不可用，未完成独立审查交接。
+
 ## 2026-08-30 MT5 v32.14 无阶梯组合保本验收通过
 
 - [x] v32.13 已将“多单/空单无阶梯组合保本”从组合保本页按钮接入独立运行时命令、组合快照及持久化状态；不再是仅有 UI 的空操作。
